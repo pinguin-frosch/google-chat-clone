@@ -42,7 +42,7 @@ export const get_user_info = (users_path) => {
         }
 
         try {
-            return JSON.parse(fs.readFileSync(user_info_path))
+            return JSON.parse(fs.readFileSync(user_info_path))['user']
         } catch (error) {
             console.error('Could not read user info')
             process.exit(1)
@@ -52,4 +52,34 @@ export const get_user_info = (users_path) => {
         console.error('There should only be one folder inside Users')
         process.exit(1)
     }
+}
+
+const get_group_info = (group_path, user_info) => {
+    const group_info_path = path.join(group_path, 'group_info.json')
+    if (fs.existsSync(group_info_path)) {
+        let data = JSON.parse(fs.readFileSync(group_info_path))['members']
+        data = data.filter(x => {
+            if (x['name'] !== user_info['name'] && x['email'] !== user_info['email']) {
+                return true
+            }
+        })
+
+        data[0]['messages'] = {}
+        data[0]['path'] = group_path
+        return data[0]
+    }
+}
+
+export const get_groups_info = (groups_path, user_info) => {
+    const groups = []
+    for (let group of fs.readdirSync(groups_path)) {
+        const current_group_path = path.join(groups_path, group)
+
+        if (fs.existsSync(path.join(current_group_path, 'messages.json'))) {
+            const group_info = get_group_info(current_group_path, user_info)
+            groups.push(group_info)
+        }
+    }
+
+    return groups
 }
