@@ -85,3 +85,8 @@ export const get_groups_info = (groups_path, user_info) => {
 
     return groups
 }
+
+const replace_bad_characters = (text) => {
+    return text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\u003c/g, '&lt;').replace(/\u003e/g, '&gt;').replace(/\n/g, '<br>')
+}
+
