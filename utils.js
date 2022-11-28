@@ -90,3 +90,8 @@ const replace_bad_characters = (text) => {
     return text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\u003c/g, '&lt;').replace(/\u003e/g, '&gt;').replace(/\n/g, '<br>')
 }
 
+const html = fs.readFileSync('group.html', { encoding: 'utf-8' })
+
+const create_html = (title, body) => {
+    return html.replace(/{{ title }}/, title).replace(/{{ body }}/, body)
+}
