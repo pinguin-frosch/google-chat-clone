@@ -64,7 +64,6 @@ const get_group_info = (group_path, user_info) => {
             }
         })
 
-        data[0]['messages'] = {}
         data[0]['path'] = group_path
         return data[0]
     }
@@ -78,9 +77,9 @@ export const get_groups_info = (groups_path, user_info) => {
         if (fs.existsSync(path.join(current_group_path, 'messages.json'))) {
             const group_info = get_group_info(current_group_path, user_info)
             if (group_info !== undefined) {
-            groups.push(group_info)
+                groups.push(group_info)
+            }
         }
-    }
     }
 
     return groups
@@ -88,6 +87,26 @@ export const get_groups_info = (groups_path, user_info) => {
 
 const replace_bad_characters = (text) => {
     return text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\u003c/g, '&lt;').replace(/\u003e/g, '&gt;').replace(/\n/g, '<br>')
+}
+
+export const create_html_file = (group_info) => {
+    const html_path = path.join(group_info['path'], 'messages.html')
+    const saved_messages = JSON.parse(fs.readFileSync(path.join(group_info['path'], 'messages.json'), { encoding: 'utf-8' }))['messages']
+    let messages = '<ul>'
+
+    for (let message of saved_messages) {
+        const name = message['creator']['name']
+        let text = message['text']
+        if (text) {
+            text = replace_bad_characters(text)
+            messages += `<li>${name}: ${text}</li>`
+        } else {
+            messages += `<li>${name}: Archivo enviado</li>`
+        }
+    }
+
+    messages += '</ul>'
+    fs.writeFileSync(html_path, create_html(group_info['name'], messages))
 }
 
 const html = fs.readFileSync('group.html', { encoding: 'utf-8' })
