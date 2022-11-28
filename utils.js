@@ -123,6 +123,13 @@ export const create_html_file = (group_info) => {
             let chat_message_message = `<div class="col-12 text-break">${text}</div>`
             chat_messages += chat_message_message
         }
+
+        const attached_files = message['attached_files']
+        if (attached_files) {
+            const file = attached_files[0]['export_name']
+            let chat_message_file = `<div class="col-12"><a target="_blank" href="${path.join(group_info['path'], file)}">File</a></div>`
+            chat_messages += chat_message_file
+        }
     }
 
     chat_messages += '</div>'
