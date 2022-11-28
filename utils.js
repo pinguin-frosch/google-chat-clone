@@ -92,21 +92,41 @@ const replace_bad_characters = (text) => {
 export const create_html_file = (group_info) => {
     const html_path = path.join(group_info['path'], 'messages.html')
     const saved_messages = JSON.parse(fs.readFileSync(path.join(group_info['path'], 'messages.json'), { encoding: 'utf-8' }))['messages']
-    let messages = '<ul>'
+    let chat_messages = '<div class="row">'
+
+    let last_name = undefined
+    let last_day = undefined
 
     for (let message of saved_messages) {
         const name = message['creator']['name']
+        const date = message['created_date']
+        const parts = date.split(',')
+        const day = parts[1]
+        const time = parts[2]
+
+        if (day !== last_day) {
+            let chat_message_day = `<div class="col-12"><h3 class="text-center my-4">${day}</h3></div>`
+            chat_messages += chat_message_day
+            last_day = day
+        }
+
+        if (name !== last_name) {
+            chat_messages += '<div class="col-12"></div>'
+            let chat_message_title = `<div class="col-12 mt-3"><b>${name}</b> <span class="small">${time}</span></div>`
+            chat_messages += chat_message_title
+            last_name = name
+        }
+
         let text = message['text']
         if (text) {
             text = replace_bad_characters(text)
-            messages += `<li>${name}: ${text}</li>`
-        } else {
-            messages += `<li>${name}: Archivo enviado</li>`
+            let chat_message_message = `<div class="col-12 text-break">${text}</div>`
+            chat_messages += chat_message_message
         }
     }
 
-    messages += '</ul>'
-    fs.writeFileSync(html_path, create_html(group_info['name'], messages))
+    chat_messages += '</div>'
+    fs.writeFileSync(html_path, create_html(group_info['name'], chat_messages))
 }
 
 const html = fs.readFileSync('group.html', { encoding: 'utf-8' })
