@@ -77,8 +77,10 @@ export const get_groups_info = (groups_path, user_info) => {
 
         if (fs.existsSync(path.join(current_group_path, 'messages.json'))) {
             const group_info = get_group_info(current_group_path, user_info)
+            if (group_info !== undefined) {
             groups.push(group_info)
         }
+    }
     }
 
     return groups
