@@ -127,13 +127,30 @@ export const create_html_file = (group_info) => {
         const attached_files = message['attached_files']
         if (attached_files) {
             const file = attached_files[0]['export_name']
-            let chat_message_file = `<div class="col-12"><a target="_blank" href="${path.join(group_info['path'], file)}">File</a></div>`
+            let chat_message_file = process_attached_file(file, group_info)
             chat_messages += chat_message_file
         }
     }
 
     chat_messages += '</div>'
     fs.writeFileSync(html_path, create_html(group_info['name'], chat_messages))
+}
+
+const process_attached_file = (file, group_info) => {
+    const file_path = path.join(group_info['path'], file)
+
+    if (is_image(file)) {
+        return `<div class="col-12"><img style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}"></div>`
+    }
+
+    return `<div class="col-12"><a href="${file_path}">FILE</a></div>`
+}
+
+const is_image = (file) => {
+    if (file.endsWith('.png') || file.endsWith('.jpg')) {
+        return true
+    }
+    return false
 }
 
 const html = fs.readFileSync('group.html', { encoding: 'utf-8' })
