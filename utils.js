@@ -143,11 +143,36 @@ const process_attached_file = (file, group_info) => {
         return `<div class="col-12"><img style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}"></div>`
     }
 
-    return `<div class="col-12"><a href="${file_path}">FILE</a></div>`
+    if (is_video(file)) {
+        return `<div class="col-12"><video style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}" controls></video></div>`
+    }
+    
+    if (is_audio(file)) {
+        return `<div class="col-12"><audio style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}" controls></audio></div>`
+    }
+
+    return `<div class="col-12"><a href="${file_path}">${file}</a></div>`
 }
 
 const is_image = (file) => {
-    if (file.endsWith('.png') || file.endsWith('.jpg')) {
+    const images = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
+    if (images.includes(file.split('.').pop())) {
+        return true
+    }
+    return false
+}
+
+const is_video = (file) => {
+    const videos = ['mp4', 'webm', 'ogg', 'mkv']
+    if (videos.includes(file.split('.').pop())) {
+        return true
+    }
+    return false
+}
+
+const is_audio = (file) => {
+    const audios = ['mp3', 'wav', 'ogg', 'flac']
+    if (audios.includes(file.split('.').pop())) {
         return true
     }
     return false
