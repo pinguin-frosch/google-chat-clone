@@ -86,7 +86,13 @@ export const get_groups_info = (groups_path, user_info) => {
 }
 
 const replace_bad_characters = (text) => {
-    return text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\u003c/g, '&lt;').replace(/\u003e/g, '&gt;').replace(/\n/g, '<br>')
+    text = text.replace(/&/g, '&amp;')
+    text = text.replace(/</g, '&lt;')
+    text = text.replace(/>/g, '&gt;')
+    text = text.replace(/"/g, '&quot;')
+    text = text.replace(/'/g, '&#039;')
+    text = text.replace(/\n/g, '<br />')
+    return text
 }
 
 export const create_html_file = (group_info) => {
@@ -136,8 +142,19 @@ export const create_html_file = (group_info) => {
     fs.writeFileSync(html_path, create_html(group_info['name'], chat_messages))
 }
 
+let current_user = undefined
 const process_attached_file = (file, group_info) => {
-    const file_path = path.join(group_info['path'], file)
+    const extension = file.split('.').pop()
+    let name = file.split('.').slice(0, -1).join('.')
+
+    if (current_user !== group_info['email']) {
+        current_user = group_info['email']
+        images = {}
+    }
+
+    name = update_image_name(name)
+
+    const file_path = path.join(group_info['path'], name + '.' + extension)
 
     if (is_image(file)) {
         return `<div class="col-12"><img style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}"></div>`
@@ -146,12 +163,27 @@ const process_attached_file = (file, group_info) => {
     if (is_video(file)) {
         return `<div class="col-12"><video style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}" controls></video></div>`
     }
-    
+
     if (is_audio(file)) {
         return `<div class="col-12"><audio style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}" controls></audio></div>`
     }
 
     return `<div class="col-12"><a href="${file_path}">${file}</a></div>`
+}
+
+let images = {}
+const update_image_name = (image) => {
+    if (images[image] === undefined) {
+        images[image] = 1
+    } else {
+        images[image] += 1
+    }
+
+    if (images[image] > 1) {
+        return `${image}(${images[image] - 1})`
+    } else {
+        return image
+    }
 }
 
 const is_image = (file) => {
@@ -163,7 +195,7 @@ const is_image = (file) => {
 }
 
 const is_video = (file) => {
-    const videos = ['mp4', 'webm', 'ogg', 'mkv']
+    const videos = ['mp4', 'webm', 'ogg']
     if (videos.includes(file.split('.').pop())) {
         return true
     }
