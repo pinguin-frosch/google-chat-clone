@@ -96,7 +96,7 @@ const replace_bad_characters = (text) => {
 }
 
 export const create_html_file = (group_info) => {
-    const html_path = path.join(group_info['path'], 'messages.html')
+    let html_path = path.join(group_info['path'], 'messages.html')
     const saved_messages = JSON.parse(fs.readFileSync(path.join(group_info['path'], 'messages.json'), { encoding: 'utf-8' }))['messages']
     let chat_messages = '<div class="row">'
 
@@ -139,7 +139,28 @@ export const create_html_file = (group_info) => {
     }
 
     chat_messages += '</div>'
+
+    let number = 0
+    while (fs.existsSync(html_path)) {
+        // Get the name without the extension and the (number)
+        const html_name = html_path.split('.').slice(0, -1).join('.')
+        // Check if the name has a number at the end
+        const match = html_name.match(/\((\d+)\)$/)
+        // Update that number
+        if (match) {
+            number = parseInt(match[1])
+            html_path = html_name.replace(/\((\d+)\)$/, `(${++number})`) + '.html'
+        } else {
+            html_path = `${html_name} (${++number}).html`
+        }
+    }
+
     fs.writeFileSync(html_path, create_html(group_info['name'], chat_messages))
+
+    return {
+        'name': group_info['name'],
+        'path': html_path
+    }
 }
 
 let current_user = undefined
