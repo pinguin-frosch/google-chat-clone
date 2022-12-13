@@ -1,5 +1,7 @@
 # google-chat-clone
-## Video Demo: 
+Beatify json data from Google Chat. Made by Gabriel Barrientos in 2022.
+
+## Video Demo: https://youtu.be/disgVw-droY
 ## Description
 This project is essentially a beautifier, what it does is it reads a folder
 that contains google chat exported data and reformats it using html. The reason
