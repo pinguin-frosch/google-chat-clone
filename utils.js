@@ -186,7 +186,7 @@ const process_attached_file = (file, group_info) => {
     }
 
     if (is_audio(file)) {
-        return `<div class="col-12"><audio style="max-width: 40%; height:auto;" class="img-thumbnail" src="${file_path}" controls></audio></div>`
+        return `<div class="col-12"><audio controls><source src="${file_path}">Your browser does not support the audio element.</audio></div>`
     }
 
     return `<div class="col-12"><a href="${file_path}">${file}</a></div>`
