@@ -59,4 +59,41 @@ user. At the end we add the `path` property to it, because we are going to need
 later when we create the html files.
 
 #### `create_html_file()`
-This is the function that has the most logic attached to it.
+This is the function that has the most logic attached to it. I will try to
+explain in the say as I did with the `index.js` file. First I store in a
+variable all the messages that came in the JSON data. Then inside a loop we
+iterate over every message and process it, for that we have a separte function.
+For every message we need to determine if the date or the user has changed in
+comparison to the previous one. This is useful because that way we can change
+the name and the date only when it's necessary. The last thing we do in every
+message is get the current text, and if there is, we sanitize it and create an
+html element containing it. A similar logic is applied to get the attached
+files. Right at the we simply need to check if there's already a file with the
+name `messages.html` so that we don't overwrite it.
+
+##### `replace_bad_characters()`
+Simple function that replaces some potentially dangerous characters in the
+text, such as ', ", <, etc. It's called in every message.
+
+##### `process_attached_file()`
+This function abstracts away the logic for checking the type of a file, cause
+we need to do different things depending on the type of the simple. For
+example, we will use `<img>` for displaying images, `<audio>` for audios and
+`<video>` for videos. For each one of those we have the functions:
+`is_video()`, `is_audio()` and `is_image()`.
+
+##### `update_image_name()`
+This is the last function worth discussing. The issue with the image names, is
+that sometimes, two or more images would have the exact name name in the
+properties. This is not an issue in Google because they maybe have another way
+to distinguish the names, or maybe that only happened before they started using
+uuid to complete the name. We do know that the numbers are sequentially during
+the date. Since we are reading the messages in order, everytime we find an
+image, we can store, and then before adding it to the html we just check to see
+if it was already there. In that case we simply keep track of the number and
+append it to the end. But we have to reset the image object after every chat,
+or we might get wrong results.
+
+##### `create_html()`
+Final function that just replaces the base html with the new messages, and it
+also adds a title to identify each chat.
