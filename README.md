@@ -1,5 +1,6 @@
 # google-chat-clone
 Beatify json data from Google Chat. Made by Gabriel Barrientos in 2022.
+Thanks [Thekawaiicokie](https://github.com/Thekawaiicokie) for the support! :D
 
 ## Video Demo: https://youtu.be/disgVw-droY
 ## Description
